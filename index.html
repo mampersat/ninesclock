@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>9Clock</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.2/js/uikit.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.2/css/uikit.min.css" />
+  </head>
+
+<h1>NinesClock</h1>
+
+<button onclick="restartClick()">Restart</button>
+
+<select id="timeframe" onchange="timeframeChange()">
+  <option value="31540000000">Year</option>
+  <option value="2628000000">Month</option>
+  <option value="604800000">Week</option>
+  <option value="86400000">Day</option>
+</select>
+
+<div>
+Nines = <div id="nines"></div>
+</div>
+
+Uptime% = <h1 style="font:courier;" id="uppercent"></h1>
+Downtime = <div id="downtime"></div>
+
+<script>
+var timeframe = 31557600000; //seconds in a year
+var start = new Date().getTime();
+var human = "None"
+
+function restartClick() {
+  start = new Date().getTime();
+}
+
+function timeframeChange() {
+  timeframe = document.getElementById("timeframe").value;
+}
+function nines(a) {
+  //n = -(Math.log(10) / Math.log(a))
+
+  return -Math.floor(Math.log(a)/Math.log(10))-1;
+}
+
+function humanize_time(second_diff) {
+  // return a human readble time based on seconds
+  day_diff = Math.floor(second_diff/60/60/24);
+
+  if (day_diff == 0) {
+//    if (second_diff < 10) {
+//        return "sub second";
+//      }
+    if (second_diff < 60) {
+        return second_diff.toFixed(2) + " seconds";
+      }
+//    if (second_diff < 120) {
+//        return "a minute ";
+//      }
+    if (second_diff < 3600) {
+        return (second_diff / 60).toFixed(2) + " minutes";
+      }
+    if (second_diff < 7200) {
+        return "an hour";
+      }
+    if (second_diff < 86400) {
+        return str(second_diff / 3600) + " hours";
+      }
+  }
+
+ if (day_diff == 1) {
+     return "a day";
+   }
+ if (day_diff < 7) {
+     return day_diff.toFixed(2) + " days";
+   }
+ if (day_diff < 31) {
+     return (day_diff / 7).toFixed(2) + " weeks";
+   }
+ if (day_diff < 365) {
+     return (day_diff / 30).toFixed(2) + " months";
+   }
+ return (day_diff / 365).toFixed(2) + " years";
+}
+
+var x = setInterval(function() {
+  now = new Date().getTime();
+  elapsed = now-start;
+  human = humanize_time(elapsed/1000);
+  document.getElementById("downtime").innerHTML = human;
+
+  a = elapsed/timeframe;
+  document.getElementById("uppercent").innerHTML = ((1-a)*100).toFixed(7);
+
+  n = nines(a);
+  document.getElementById("nines").innerHTML = n;
+
+}, 100)
+
+</script>
+
+</html>
